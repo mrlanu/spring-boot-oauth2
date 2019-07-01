@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3'
 
 services:
   mysql-docker-container:
@@ -10,18 +10,30 @@ services:
       - MYSQL_PASSWORD=test123
     volumes:
       - /data/mysql
-  spring-boot-jpa-app:
-    image: spring-boot-jpa-image
+  auth-server-container:
+    image: auth-server
     build:
       context: ./
       dockerfile: Dockerfile
     depends_on:
       - mysql-docker-container
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://172.18.0.2:3306/spring_app_db?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker-container:3306/spring_app_db?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=app_user
       - SPRING_DATASOURCE_PASSWORD=test123
     ports:
       - 8087:8080
     volumes:
-      - /data/spring-boot-app
+      - /data/auth-server
+  resource-server-container:
+    image: resource-server
+    build:
+      context: ../resource-server
+      dockerfile: Dockerfile
+    environment:
+      - SECURITY_OAUTH2_RESOURCE_USER-INFO-URI=http://auth-server-container:8080/validateUser
+      - SERVER_PORT=8080
+    ports:
+      - 9000:8080
+    volumes:
+      - /data/resource-server
