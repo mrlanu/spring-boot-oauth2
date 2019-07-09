@@ -5,9 +5,11 @@ services:
     image: mysql:latest
     environment:
       - MYSQL_ROOT_PASSWORD=root123
-      - MYSQL_DATABASE=spring_app_db
-      - MYSQL_USER=app_user
-      - MYSQL_PASSWORD=test123
+      - MYSQL_DATABASE=homebudget_db
+      - MYSQL_USER=mrlanu
+      - MYSQL_PASSWORD=12345
+    ports:
+    - 3306:3306
     volumes:
       - /data/mysql
   auth-server-container:
@@ -18,9 +20,9 @@ services:
     depends_on:
       - mysql-docker-container
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker-container:3306/spring_app_db?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=app_user
-      - SPRING_DATASOURCE_PASSWORD=test123
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-docker-container:3306/homebudget_db?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=mrlanu
+      - SPRING_DATASOURCE_PASSWORD=12345
     ports:
       - 8087:8080
     volumes:
